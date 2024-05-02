@@ -1,0 +1,13 @@
+<div class="modal" [ngClass]="{ 'modal--active': show }">
+  <div class="modal__header">
+    <a class="modal__close" (click)="closeModal()"><i class="bi bi-x-lg"></i></a>
+  </div>
+  <div class="modal__body">
+    <h2>Asignar rol administrador</h2>
+    <p>Nombre: {{ selectedPlayer.name }}</p>
+  </div>
+  <div class="modal__footer">
+    <atom-button (click)="assignAdministratorRole()" [text]="'Asignar rol'" [typeUse]="'permission'"></atom-button>
+    <atom-button (click)="closeModal()" [text]="'Cancelar'"></atom-button>
+  </div>
+</div>

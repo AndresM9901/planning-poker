@@ -1,0 +1,61 @@
+@import '../../../../assets/styles/colors.scss';
+
+.modal {
+  display: none; /* Esconder el modal por defecto */
+  position: fixed; /* Posicionamiento absoluto */
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 190px;
+  background-color: $primary-60-purple-primary-purple-900; /* Fondo semitransparente */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  border: 1px solid $primary-60-purple-primary-purple-500;
+
+  &--active {
+    display: flex; /* Mostrar el modal cuando esté activo */
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+    background-color: $primary-60-purple-primary-purple-500;
+    padding: 8px 20px;
+    border-radius: 20px 20px 0 0;
+
+  }
+
+  &__close {
+    cursor: pointer;
+    color: $color-text-primary;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  &__body {
+    color: $color-text-primary;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    // align-items: center;
+    padding: 8px 20px;
+    height: 60%;
+
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 20px;
+    gap: 8px;
+  }
+}

@@ -1,0 +1,18 @@
+<div class="modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Invitar Jugadores</h4>
+    <a class="modal-close" (click)="closeInviteModal()"><i class="bi bi-x-lg"></i></a>
+  </div>
+  <div class="modal-body">
+    <input
+      readonly
+      [value]="urlValue"
+      id="inviteUrl"
+      class="modal-input"
+    />
+    <atom-button
+      [text]="'Copiar link'"
+      (click)="copyToClipboard(urlValue)"
+    ></atom-button>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="modal-user">
+  <form class="create-user__form" [formGroup]="playerForm" (ngSubmit)="onSubmit()">
+    <div class="create-user__form-input">
+      <label for="userName" class="create-user__form-label">Tu nombre</label>
+      <atom-input
+        [name]="'playerName'"
+        [id]="'userName'"
+        [type]="'text'"
+        [required]="true"
+        (valueChange)="onInputValueChange($event)"
+        [formControl]="convertToFormControl(playerForm.controls['playerName'])"
+        ></atom-input>
+      <div class="container-errors">
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('minlength')">
+          El nombre de la partida debe tener al menos 5 caracteres.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('maxlength')">
+          El nombre de la partida no puede tener más de 20 caracteres.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('pattern')">
+          El nombre de la partida no puede contener caracteres especiales.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('maxThreeNumbers')">
+          El nombre de la partida no puede tener más de 3 números
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('noLeadingTrailingSpaces')">
+          El nombre de la partida no puede tener espacios al principio.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('noTrailingSpaces')">
+          El nombre de la partida no puede tener espacios al final.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('noConsecutiveSpaces')">
+          El nombre de la partida no puede tener dos espacios seguidos.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('noStartWithNumber')">
+          El nombre de la partida no puede comenzar con números.
+        </div>
+        <div class="create-user__form-error" *ngIf="playerForm.get('playerName')!.hasError('noStartWithNumber')">
+          El nombre de la partida no puede consistir solo en números.
+        </div>
+      </div>
+    </div>
+    <div class="create-user__form-radio">
+      <label for="playerRadio">
+        Jugador
+        <atom-input-radio
+          [name]="'gameMode'"
+          [value]="'player'"
+          [required]="true"
+          [formControl]="convertToFormControl(playerForm.controls['gameMode'])"
+          (valueChange)="onInputValueChange($event)"
+          id="playerRadio"
+          ></atom-input-radio>
+      </label>
+      <label for="viewerRadio">
+        Espectador
+        <atom-input-radio
+          id="viewerRadio"
+          [name]="'gameMode'"
+          [value]="'viewer'"
+          [required]="true"
+          [formControl]="convertToFormControl(playerForm.controls['gameMode'])"
+          (valueChange)="onInputValueChange($event)"
+          ></atom-input-radio>
+      </label>
+    </div>
+    <atom-button
+    [disabled]="playerForm.invalid"
+    [typeUse]="'form'"
+    [text]="'Continuar'"
+    type="submit"
+    ></atom-button>
+  </form>
+</div>

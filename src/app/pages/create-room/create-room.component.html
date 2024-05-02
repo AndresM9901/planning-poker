@@ -1,0 +1,52 @@
+<div class="create-room__header">
+  <img src="../../../../assets/images/fichadepoker.svg" alt="Logo de pragma"
+  class="create-room__header-logo">
+  <h2 class="create-room__header-title">Crear partida</h2>
+</div>
+<form class="create-room__form">
+  <div class="create-room__input">
+    <label for="roomName" class="create-room__form-label">Nombra la partida</label>
+    <atom-input
+      [formControl]="roomNameControl"
+      [id]="'roomName'"
+      [type]="'text'"
+      [required]="true"
+      (valueChange)="onInputValueChange($event)"
+    ></atom-input>
+  </div>
+  <div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('minlength')">
+      El nombre de la partida debe tener al menos 5 caracteres.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('maxlength')">
+      El nombre de la partida no puede tener más de 20 caracteres.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('pattern')">
+      El nombre de la partida no puede contener caracteres especiales.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('maxThreeNumbers')">
+      El nombre de la partida no puede tener más de 3 números
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('noLeadingTrailingSpaces')">
+      El nombre de la partida no puede tener espacios al principio.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('noTrailingSpaces')">
+      El nombre de la partida no puede tener espacios al final.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('noConsecutiveSpaces')">
+      El nombre de la partida no puede tener dos espacios seguidos.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('noStartWithNumber')">
+      El nombre de la partida no puede comenzar con números.
+    </div>
+    <div class="create-room__form-error" *ngIf="roomNameControl.hasError('noOnlyNumbers')">
+      El nombre de la partida no puede consistir solo en números.
+    </div>
+  </div>
+  <atom-button
+    [disabled]="!roomNameControl.valid"
+    [typeUse]="'form'"
+    [text]="'Crear Partida'"
+    (click)="onSubmit($event)"
+  ></atom-button>
+</form>

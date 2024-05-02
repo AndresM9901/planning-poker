@@ -1,0 +1,7 @@
+<button
+  [ngClass]="{ 'room-game__table-button': typeUse === 'table', 'room-game__header-button': typeUse === 'profile', 'permission-modal': typeUse === 'permission' }"
+  [disabled]="disabled"
+  [type]="type"
+  [value]="value"
+  (typeUse)="typeUse"
+>{{ text }}</button>

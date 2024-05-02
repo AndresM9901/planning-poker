@@ -1,0 +1,22 @@
+@import '../../../../assets/styles/colors.scss';
+
+:host {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+input {
+  border: 1px solid $color-border;
+  border-radius: 100px;
+  background-color: $color-background-input;
+  width: 294px;
+  height: 42px;
+  padding: 4px 4px 4px 15px;
+  color: $color-text-primary;
+}
+
+input:focus {
+  outline: none;
+  background-color: $color-background-input;
+}

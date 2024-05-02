@@ -1,0 +1,30 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+@import './assets/styles/styles.scss';
+
+body {
+  background: radial-gradient(50% 50% at 50% 50%, #330072 0%, rgba(31, 13, 63, 1) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: -4;
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+app-root {
+  width: 100vw;
+  height: 100vh;
+  z-index: -4;
+}
+
+html, body {
+  height: 100%;
+}

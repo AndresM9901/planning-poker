@@ -1,0 +1,198 @@
+<div class="room-game"
+  [ngClass]="{ 'room-game--blur': isOpenModal || isOpenInviteModal || isShowPermissionModal }"
+>
+  <header class="header">
+    <img
+      class="header__logo"
+      src="../../../assets/images/fichadepoker.svg"
+      alt="Logo de Pragma"
+    />
+    <h2 class="header__title">{{ roomGameName }}</h2>
+    <div class="header__buttons">
+      <div class="div-profile" (click)="toggleDropdown()">
+        {{ playerSession.initialLetter | uppercase }}
+        <ul class="dropdown__menu" *ngIf="isDropdownOpen">
+          <li *ngIf="playerSession.gameMode === 'viewer'; else player" class="dropdown__item" (click)="changeMode('player')">Cambiar modo</li>
+          <ng-template #player>
+            <li class="dropdown__item" (click)="changeMode('viewer')">Cambiar modo</li>
+          </ng-template>
+        </ul>
+      </div>
+      <atom-button
+        [text]="'Invitar jugadores'"
+        [typeUse]="'profile'"
+        [type]="'button'"
+        (click)="openModalInvitePlayer()"
+      ></atom-button>
+    </div>
+  </header>
+  <div class="container-game">
+    <div class="rectangle-container"
+      *ngIf="isFormSubmitted"
+    >
+      <div class="first-rectangle">
+        <div class="second-rectangule">
+          <div class="third-rectangule">
+            <atom-button
+              (click)="onRevealClick()"
+              *ngIf="isSelectCards && isPlayerAdmin"
+              [text]="'Revelar cartas'"
+              [typeUse]="'table'"
+            ></atom-button>
+            <atom-button
+              (click)="resetVoting()"
+              *ngIf="isEndVotes && isPlayerAdmin"
+              [text]="'Nueva votación'"
+              [typeUse]="'table'"
+            ></atom-button>
+          </div>
+        </div>
+      </div>
+      <div class="players-container">
+        <!-- room-game.component.html -->
+
+        <div class="section section--horizontal-top">
+          <!-- Jugadores asignados a esta sección -->
+          <atom-card
+            *ngFor="let player of sections[0]"
+            [name]="player.name"
+            [typeCard]="player.gameMode"
+            [initialLetter]="player.initialLetter"
+            [selectedCard]="player.selectedCard"
+            [number]="player.point"
+            [revealPoint]="isRevealPoints"
+            (click)="openPermissionModal(player)"
+          >
+          </atom-card>
+        </div>
+
+        <div class="section section--vertical-left">
+          <!-- Jugadores asignados a esta sección -->
+          <atom-card
+            *ngFor="let player of sections[1]"
+            [name]="player.name"
+            [typeCard]="player.gameMode"
+            [initialLetter]="player.initialLetter"
+            [selectedCard]="player.selectedCard"
+            [number]="player.point"
+            [revealPoint]="isRevealPoints"
+            (click)="openPermissionModal(player)"
+          >
+          </atom-card>
+        </div>
+
+        <div class="section section--vertical-right">
+          <!-- Jugadores asignados a esta sección -->
+          <atom-card
+            *ngFor="let player of sections[3]"
+            [name]="player.name"
+            [typeCard]="player.gameMode"
+            [initialLetter]="player.initialLetter"
+            [selectedCard]="player.selectedCard"
+            [number]="player.point"
+            [revealPoint]="isRevealPoints"
+            (click)="openPermissionModal(player)"
+          >
+          </atom-card>
+        </div>
+
+        <div class="section section--horizontal-bottom">
+          <!-- Jugadores asignados a esta sección -->
+          <div class="section--horizontal-bottom__left">
+            <atom-card
+              *ngFor="let player of sections[2]"
+              [name]="player.name"
+              [typeCard]="player.gameMode"
+              [initialLetter]="player.initialLetter"
+              [selectedCard]="player.selectedCard"
+              [number]="player.point"
+              [revealPoint]="isRevealPoints"
+              (click)="openPermissionModal(player)"
+            >
+            </atom-card>
+          </div>
+          <div class="section--horizontal-bottom__center">
+            <atom-card
+              [name]="playerSession.name"
+              [typeCard]="playerSession.gameMode"
+              [initialLetter]="playerSession.initialLetter"
+              [selectedCard]="playerSession.selectedCard"
+              [number]="playerSession.point"
+              [revealPoint]="isRevealPoints"
+              (click)="openPermissionModal(playerSession)"
+            >
+            </atom-card>
+          </div>
+          <div class="section--horizontal-bottom__right">
+            <atom-card
+            *ngFor="let player of sections[4]"
+            [name]="player.name"
+            [typeCard]="player.gameMode"
+            [initialLetter]="player.initialLetter"
+            [selectedCard]="player.selectedCard"
+            [number]="player.point"
+            [revealPoint]="isRevealPoints"
+            (click)="openPermissionModal(player)"
+          >
+          </atom-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-player__options"
+
+  >
+    <div class="container-cards"
+      *ngIf="scores.length > 0; else noScore"
+    >
+      <div class="container-cards__options"
+        *ngIf="!isAverageSelected && isPlayerSession(); else averageContainer"
+      >
+        <p class="container-cards__options__text">Elige una carta 👇</p>
+        <div class="container-cards__options__select-cards">
+          <atom-card
+            *ngFor="let card of scores"
+            [number]="card.point"
+            [typeCard]="'card-point'"
+            [selectedCard]="card.selectedCard && card.hostSelectCard"
+            [selectedCards]="isSelectCards"
+            (click)="onPointCardClick(card.point)"
+            [ngClass]="{ 'card-active': card.selectedCard && card.hostSelectCard }"
+            ></atom-card>
+        </div>
+      </div>
+      <ng-template #averageContainer>
+        <div class="container-cards__average"
+          *ngIf="isAverageSelected"
+        >
+          <div class="container-cards__average__cards">
+            <atom-card
+              *ngFor="let card of selectedCards"
+              [name]="card.count + ' Voto'"
+              [number]="card.point"
+              [typeCard]="'point-reveal'"
+              ></atom-card>
+              <!-- [revealPoint]="true" -->
+          </div>
+          <div class="container-cards__average__text">
+            <p>Promedio:</p>
+            <p class="container-cards__average__text__average">{{ average | number:'.1-1' }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <ng-template #noScore>
+      <p class="container-player__options__text-no-score">No hay cartas</p>
+    </ng-template>
+  </div>
+</div>
+
+<atom-notification *ngIf="isShowInfo" [message]="messageInfo"></atom-notification>
+
+<app-create-user *ngIf="isOpenModal" (formSubmitted)="closeUserModal()"></app-create-user>
+
+<templates-invite-players-modal *ngIf="isOpenInviteModal" [urlValue]="url" (closeModal)="openModalInvitePlayer()" (copyText)="copyToUrl()"></templates-invite-players-modal>
+
+<template-give-permission-modal *ngIf="isShowPermissionModal" [selectedPlayer]="playerSelected" [show]="isShowPermissionModal" (modalClosed)="closePermissionModal($event)"></template-give-permission-modal>

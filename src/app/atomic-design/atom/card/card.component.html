@@ -1,0 +1,16 @@
+<div
+  class="card"
+  [ngClass]="{ 'card-viewer-mode': typeCard === 'viewer', 'card-player-mode': typeCard === 'player', 'card-point-reveal': typeCard === 'point-reveal', 'card-point-mode': typeCard === 'card-point', 'card__active': selectedCard, 'card__reveal': revealPoint, 'card__disabled': selectedCards }"
+>
+  <div class="card-content">
+    <h2 class="card-number">
+      {{ number }}
+    </h2>
+    <h2 class="card-initial-letter">
+      {{ initialLetter | uppercase }}
+    </h2>
+  </div>
+  <p class="player-name">
+    {{ name }}
+  </p>
+</div>

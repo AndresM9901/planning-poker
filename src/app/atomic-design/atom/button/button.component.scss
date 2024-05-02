@@ -1,0 +1,47 @@
+@import '../../../../assets/styles/colors.scss';
+
+:host {
+  width: fit-content;
+  height: 40px;
+}
+
+button {
+  border-radius: 50px;
+  width: 100%;
+  height: 40px;
+  padding: 8px 24px;
+  background-color: $gray-scale-Gray-50;
+  color: $primary-60-purple-primary-purple-700;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  line-height: 16px;
+  text-align: center;
+
+  &:disabled {
+    background-color: $color-bg-button_disabled;
+    color: $color-text-button_disabled;
+    cursor: not-allowed;
+  }
+}
+
+.room-game__table-button {
+  color: $color-text-button-table;
+  background-color: $color-bg-button-table;
+}
+
+.room-game__header-button {
+  color: $color-text-button-table;
+  background-color: transparent;
+  border: 1px solid $color-border-button-profile;
+  font-size: 14px;
+  line-height: 140%;
+  height: 36px;
+}
+
+
+.permission-modal {
+  background-color: $color-text-primary;
+}
