@@ -49,16 +49,15 @@
           [required]="true"
           [formControl]="convertToFormControl(playerForm.controls['gameMode'])"
           (valueChange)="onInputValueChange($event)"
-          id="playerRadio"
+          [id]="'playerRadio'"
           ></atom-input-radio>
       </label>
       <label for="viewerRadio">
         Espectador
         <atom-input-radio
-          id="viewerRadio"
+          [id]="'viewerRadio'"
           [name]="'gameMode'"
           [value]="'viewer'"
-          [required]="true"
           [formControl]="convertToFormControl(playerForm.controls['gameMode'])"
           (valueChange)="onInputValueChange($event)"
           ></atom-input-radio>

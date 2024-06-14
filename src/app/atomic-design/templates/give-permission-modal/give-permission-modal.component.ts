@@ -26,7 +26,6 @@ export class GivePermissionModalComponent {
 
 
   assignAdministratorRole() {
-    // Implementa aquí la lógica para asignar el rol administrador al jugador seleccionado
     this.givePermissionService.giveAdminRoleToThePlayer(this.selectedPlayer);
     this.closeModal();
   }

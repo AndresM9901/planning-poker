@@ -16,6 +16,12 @@ describe('ButtonComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ButtonComponent);
     component = fixture.componentInstance;
+    component.text = '';
+    component.value = '';
+    component.type = 'button';
+    component.disabled = false;
+    component.typeUse = 'form';
+    component.revealPoints = false;
     fixture.detectChanges();
   });
 

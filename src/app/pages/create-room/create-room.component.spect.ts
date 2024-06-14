@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateRoomComponent } from './create-room.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedService } from '../../shared/services/shared.service';
+import { SharedService } from '../../shared/services/shared/shared.service';
 import { RoomService } from '../../services/room/room.service';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../services/web-socket/web-socket.service';

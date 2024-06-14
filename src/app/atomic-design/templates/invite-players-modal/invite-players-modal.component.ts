@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output, Renderer2 } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
   selector: 'templates-invite-players-modal',
@@ -15,19 +16,14 @@ export class InvitePlayersModalComponent {
   inviteUrl = new FormControl('', []);
 
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private clipboardService: ClipboardService) { }
 
   closeInviteModal() {
     this.closeModal.emit()
   }
 
-  copyToClipboard(value: string) {
-    const textarea = this.renderer.createElement('textarea');
-    this.renderer.setProperty(textarea, 'value', value);
-    this.renderer.appendChild(document.body, textarea);
-    textarea.select();
-    document.execCommand('copy');
-    this.renderer.removeChild(document.body, textarea);
+  copyToClipboard() {
+    this.clipboardService.copy(this.urlValue);
     this.copyText.emit();
   }
 }

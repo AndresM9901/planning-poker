@@ -17,6 +17,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { GivePermissionModalComponent } from './atomic-design/templates/give-permission-modal/give-permission-modal.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NotificationComponent } from './atomic-design/atom/notification/notification.component';
+import { ClipboardModule } from 'ngx-clipboard';
 
 const config: SocketIoConfig = {
   url: 'http://localhost:3000',
@@ -43,6 +44,7 @@ const config: SocketIoConfig = {
     ReactiveFormsModule,
     HttpClientModule,
     SocketIoModule.forRoot(config),
+    ClipboardModule
   ],
   providers: [
     provideAnimationsAsync()

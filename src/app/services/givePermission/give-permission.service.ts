@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class GivePermissionService {
-  response = new Subject<any>();
+  response$ = new Subject<any>();
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class GivePermissionService {
     };
     this.http.post<any>('http://localhost:3001/add-admin', body).subscribe(
       (response) => {
-        this.response.next(response);
+        this.response$.next(response);
       }
     );
   }

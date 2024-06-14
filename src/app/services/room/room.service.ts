@@ -30,7 +30,7 @@ export class RoomService {
     this.webSocketService.emitEvent('select-card', player);
   }
 
-  onUpdatePlayer(): Observable<any> {
+  onUpdatePlayer(): Observable<Player> {
     return this.webSocketService.listenEvent('update-player');
   }
 

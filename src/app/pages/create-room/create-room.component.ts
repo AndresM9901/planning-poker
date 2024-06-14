@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { CustomValidators } from '../../shared/validators/custom-validators';
-import { SharedService } from '../../shared/services/shared.service';
+import { SharedService } from '../../shared/services/shared/shared.service';
 import { RoomService } from '../../services/room/room.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class CreateRoomComponent {
   onSubmit(event: Event) {
     event?.preventDefault();
     const gameId = this.sharedService.generateUniqueId();
-    this.sharedService.setGameName = this.roomNameControl.value;
+    // this.sharedService.setGameName = this.roomNameControl.value;
     this.roomService.createRoom(gameId, this.roomNameControl.value);
     this.router.navigate([`/room-game/${gameId}` ]);
   }

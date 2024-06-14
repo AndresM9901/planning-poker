@@ -2,7 +2,7 @@ import { Component, forwardRef, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormBuilder, AbstractControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { CustomValidators } from '../../../shared/validators/custom-validators';
-import { SharedService } from '../../../shared/services/shared.service';
+import { SharedService } from '../../../shared/services/shared/shared.service';
 import { CreatePlayerService } from '../../../services/create-player/create-player.service';
 
 @Component({
@@ -57,14 +57,28 @@ export class CreateUserComponent {
     return Math.floor(Math.random() * 100) + 1;
   }
 
+  /**
+  * description: Handles the submission of a new player to the game if the form data is valid.
+  * Creates a player with a unique identifier, initial and other details, adds him/her to the game, joins the game, and creates a player session.
+  * and creates a player session. Emits an event indicating that the form has been submitted.
+  * @date: 15-05-2024
+  * @author: Andres Marin
+  * @method
+  */
   onSubmit(): void {
-    const uniqueId = this.generateId();
+    // validar si los datos son ingresados
+    if(this.playerForm.invalid) return;
+    const id = this.generateId();
+    const idGame = this.sharedService.getIdRoom;
+    const initialLetter = this.extractInitialLettersToPlayer(this.playerForm.controls['playerName'].value);
+    const name = this.playerForm.controls['playerName'].value;
+    const gameMode = this.playerForm.controls['gameMode'].value;
     const newPlayer = {
-      id: uniqueId,
-      idGame: this.sharedService.getIdRoom,
-      initialLetter: this.extractInitialLettersToPlayer(this.playerForm.controls['playerName'].value),
-      name: this.playerForm.controls['playerName'].value,
-      gameMode: this.playerForm.controls['gameMode'].value,
+      id,
+      idGame,
+      initialLetter,
+      name,
+      gameMode,
       selectedCard: false,
       isHost: true,
       point: 0,
@@ -76,7 +90,7 @@ export class CreateUserComponent {
     this.formSubmitted.emit();
   }
 
-  private extractInitialLettersToPlayer(name: string): string {
+  extractInitialLettersToPlayer(name: string): string {
     return name.slice(0, 2);
   }
 

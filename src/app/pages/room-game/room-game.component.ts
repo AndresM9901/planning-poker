@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import { Player } from '../../config/interfaces/player.interface';
-import { SharedService } from '../../shared/services/shared.service';
+import { SharedService } from '../../shared/services/shared/shared.service';
 import { CreatePlayerService } from '../../services/create-player/create-player.service';
 import { RoomService } from '../../services/room/room.service';
+import { Game, Score, SelectCard, StateGame, StateGameFlags, cardVote } from '../../config/interfaces/game.interface';
 
 @Component({
   selector: 'app-room-game',
@@ -29,10 +30,10 @@ export class RoomGameComponent implements OnInit {
   public sections: any[][] = [];
   public currentSectionIndex: number = 0;
   public selectedScoreMode: 'normal' | 'fibonacci' = 'fibonacci';
-  public scores: any[] = [
+  public scores: Score[] = [
     // { point: 0, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 1, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 2, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 3, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 5, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 8, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 13, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 21, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 34, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 55, selectedCard: false, hostSelectCard: false, count: 0 }, { point: 89, selectedCard: false, hostSelectCard: false, count: 0 }, { point: '?', selectedCard: false, hostSelectCard: false, count: 0 }, { point: '☕', selectedCard: false, hostSelectCard: false, count: 0 }
   ];
-  public selectedCards: any[] = [];
+  public selectedCards: SelectCard[] = [];
   public average: number = 0;
   public playerSelected: any;
   public messageInfo: string = '';
@@ -49,83 +50,17 @@ export class RoomGameComponent implements OnInit {
   public isOpenInviteModal: boolean = false;
   public isDropdownOpen: boolean = false;
   public isShowInfo: boolean = false;
-  private adminsPlayers: any[] = [];
+  private adminsPlayers: Player[] = [];
   private unsuscriber$: Subject<void> = new Subject<void>();
-
-  public players: Player[] = [
-    // {
-    //   id: 1,
-    //   initialLetter: '',
-    //   name: 'Luisa',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 2,
-    //   initialLetter: '',
-    //   name: 'Vale',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 3,
-    //   initialLetter: '',
-    //   name: 'Pedro',
-    //   gameMode: 'viewer',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 4,
-    //   initialLetter: '',
-    //   name: 'David',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 5,
-    //   initialLetter: '',
-    //   name: 'Luis',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 6,
-    //   initialLetter: '',
-    //   name: 'Oscar',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-    // {
-    //   id: 7,
-    //   initialLetter: '',
-    //   name: 'Carlos',
-    //   gameMode: 'player',
-    //   selectedCard: false,
-    //   isHost: false,
-    //   point: 0,
-    // },
-  ];
+  public players: Player[] = [];
 
   constructor(private route: ActivatedRoute, private sharedService: SharedService, private createPlayerService: CreatePlayerService, private roomService: RoomService) { }
 
   ngOnInit() {
     this.openUserModal();
-    this.sharedService.isFormSubmitted$.pipe(takeUntil(this.unsuscriber$)).subscribe((value) => this.isFormSubmitted = value);
+    this.sharedService.getFormSubmitted.pipe(takeUntil(this.unsuscriber$)).subscribe((value) => this.isFormSubmitted = value);
     this.generateScores();
     this.roomName();
-    // crear funcion para llamar los params del route
     this.receiveRoutingParameters();
     this.isViewer = this.checkHostIsModePlayer();
     this.checkOnRevealPoints();
@@ -134,18 +69,18 @@ export class RoomGameComponent implements OnInit {
   }
 
   checkOnRevealPoints(): void {
-    this.roomService.onRevealPoints().pipe(takeUntil(this.unsuscriber$)).subscribe((stateGame) => {
-      if(stateGame) {
-        this.isRevealPoints = stateGame.isReveal;
-        this.isAverageSelected = stateGame.isAverage;
-        this.isSelectCards = stateGame.isSelectedCards;
-        this.isEndVotes = stateGame.isEndVotes;
+    this.roomService.onRevealPoints().pipe(takeUntil(this.unsuscriber$)).subscribe(({ isRevealPoints, isAverageSelected, isSelectCards, isEndVotes }: StateGameFlags) => {
+      if(isRevealPoints || isAverageSelected || isSelectCards || isEndVotes) {
+        this.isRevealPoints = isRevealPoints;
+        this.isAverageSelected = isAverageSelected;
+        this.isSelectCards = isSelectCards;
+        this.isEndVotes = isEndVotes;
       }
-    })
+    });
   }
 
   checkOnVotes(): void {
-    this.roomService.onCardVotes().pipe(takeUntil(this.unsuscriber$)).subscribe((cardsVotes) => {
+    this.roomService.onCardVotes().pipe(takeUntil(this.unsuscriber$)).subscribe((cardsVotes: cardVote) => {
       if(cardsVotes) {
         this.selectedCards = cardsVotes.votes;
         this.average = cardsVotes.average;
@@ -153,7 +88,7 @@ export class RoomGameComponent implements OnInit {
     })
   }
 
-  openPermissionModal(player: any): void {
+  openPermissionModal(player: Player): void {
     const isAdminPlayerSession = this.adminsPlayers.find(p => p.id === this.playerSession.id);
     const isAdmin = this.adminsPlayers.find(p => p.id === player.id);
     if(isAdminPlayerSession) {
@@ -165,9 +100,8 @@ export class RoomGameComponent implements OnInit {
           this.messageInfo = '';
         }, 2000);
       } else {
-        this.playerSelected = player; // Actualizar la propiedad con el jugador seleccionado
-        this.isShowPermissionModal = true; // Mostrar el modal
-        console.log('hola', this.adminsPlayers.includes(player.id));
+        this.playerSelected = player;
+        this.isShowPermissionModal = true;
       }
     } else {
       this.messageInfo = "No tienes permisos para realizar esta acción";
@@ -181,7 +115,7 @@ export class RoomGameComponent implements OnInit {
   }
 
   addPlayerInAdmins(): void {
-    this.roomService.onUpdateAdmins().pipe(takeUntil(this.unsuscriber$)).subscribe((admins) => {
+    this.roomService.onUpdateAdmins().pipe(takeUntil(this.unsuscriber$)).subscribe((admins: Player[]) => {
       this.adminsPlayers = admins;
       this.isShowPermissionModal = false;
       this.isShowInfo = true;
@@ -195,39 +129,36 @@ export class RoomGameComponent implements OnInit {
 
   closePermissionModal(event: any): void {
     this.isShowPermissionModal = event;
-    console.log('se cierra modal');
   }
 
   checkOnResetGame(): void {
-    this.roomService.onResetGame().pipe(takeUntil(this.unsuscriber$)).subscribe((stateGame) => {
-      if(stateGame) {
-        this.players = stateGame.players;
-        console.log(stateGame.players);
-        this.scores = stateGame.scores;
-        this.selectedCards = stateGame.selectedCards;
-        this.average = stateGame.average;
-        this.isSelectCards = stateGame.isSelectCards;
-        this.isRevealPoints = stateGame.isRevealPoints;
-        this.isCardsBlocked = stateGame.isCardsBlocked;
-        this.isAverageSelected = stateGame.isAverageSelected;
-        this.isEndVotes = stateGame.isEndVotes;
+    this.roomService.onResetGame().pipe(takeUntil(this.unsuscriber$)).subscribe(({ players, scores, selectedCards, average, isSelectCards, isRevealPoints, isCardsBlocked, isAverageSelected, isEndVotes }: StateGame) => {
+      if(players || scores || selectedCards || average || isSelectCards || isRevealPoints || isCardsBlocked || isAverageSelected || isEndVotes) {
+        this.players = players;
+        this.scores = scores;
+        this.selectedCards = selectedCards;
+        this.average = average;
+        this.isSelectCards = isSelectCards;
+        this.isRevealPoints = isRevealPoints;
+        this.isCardsBlocked = isCardsBlocked;
+        this.isAverageSelected = isAverageSelected;
+        this.isEndVotes = isEndVotes;
         this.players.forEach((player) => {
           if(player.id === this.playerSession.id) {
             this.playerSession = player;
           }
           this.updatePlayerInSection(player);
-        })
+        });
       }
-    })
+    });
   }
 
   private roomName(): void {
-    this.roomService.onNewPlayer().pipe(takeUntil(this.unsuscriber$)).subscribe((value) => {
-      if(value) {
-        this.roomGameName = value.name;
-        this.adminsPlayers = value.admins;
-      }
-    })
+    this.roomService.onNewPlayer().pipe(takeUntil(this.unsuscriber$)).subscribe(({ name, admins }: Game) => {
+      if(!name || !admins) return;
+      this.roomGameName = name;
+      this.adminsPlayers = admins;
+    });
   }
 
   ngOnDestroy() {
@@ -248,36 +179,56 @@ export class RoomGameComponent implements OnInit {
   }
 
   private dividePlayersIntoSections(): void {
-    this.extractInitialLetters();
-    // Asignar jugadores de forma secuencial a las secciones
     this.sections = Array.from({ length: 5 }, () => []);
-    if(this.players) {
+    if (this.players) {
       this.players.forEach((player) => {
-        const sectionIndex = this.currentSectionIndex;
-        if (this.playerSession.id !== player.id) {
-          if (sectionIndex === 0 || this.sections[0].length % 2 !== 0) {
-            this.sections[sectionIndex].push(player);
-            this.currentSectionIndex = (this.currentSectionIndex + 1) % 5;
-          }
-          else if(this.sections[0].length % 2 === 0 && this.sections[0].length >= 3) {
-            if (this.sections[1].length % 2 !== 0 && this.sections[3].length % 2 !== 0) {
-              this.sections[sectionIndex].push(player);
-              this.currentSectionIndex = (this.currentSectionIndex + 1) % 5;
-            }
-            else {
-              this.sections[sectionIndex-1].push(player);
-              this.currentSectionIndex = (this.currentSectionIndex + 1) % 5;
-            }
-          }
-          else {
-            this.sections[0].push(player);
-            this.currentSectionIndex = (this.currentSectionIndex + 1) % 5;
-          }
-        } else {
+        if (this.isCurrentPlayer(player)) {
           this.playerSession = player;
+        } else {
+          this.assignPlayerToSection(player);
         }
       });
     }
+  }
+
+  private isCurrentPlayer(player: Player): boolean {
+    return this.playerSession.id === player.id;
+  }
+
+  private assignPlayerToSection(player: Player): void {
+    const sectionIndex = this.currentSectionIndex;
+
+    if (this.isOddOrZeroSection()) {
+      this.sections[sectionIndex].push(player);
+      this.updateCurrentSectionIndex();
+    } else if (this.isEvenSectionAndNotInitial()) {
+      if (this.areOddSectionsFilled()) {
+        this.sections[sectionIndex].push(player);
+        this.updateCurrentSectionIndex();
+      } else {
+        this.sections[sectionIndex - 1].push(player);
+        this.updateCurrentSectionIndex();
+      }
+    } else {
+      this.sections[0].push(player);
+      this.updateCurrentSectionIndex();
+    }
+  }
+
+  private isOddOrZeroSection(): boolean {
+    return this.currentSectionIndex === 0 || this.sections[0].length % 2 !== 0;
+  }
+
+  private isEvenSectionAndNotInitial(): boolean {
+    return this.sections[0].length % 2 === 0 && this.sections[0].length >= 3;
+  }
+
+  private areOddSectionsFilled(): boolean {
+    return this.sections[1].length % 2 !== 0 && this.sections[3].length % 2 !== 0;
+  }
+
+  private updateCurrentSectionIndex(): void {
+    this.currentSectionIndex = (this.currentSectionIndex + 1) % 5;
   }
 
   private generateScores(): void {
@@ -299,19 +250,7 @@ export class RoomGameComponent implements OnInit {
     }
   }
 
-  private extractInitialLetters(): void {
-    if(!this.players) {
-      return;
-    }
-    this.players.forEach(player => {
-      // Verificar que el nombre tenga al menos dos letras
-      if (player.name && player.name.length >= 2) {
-        player.initialLetter = player.name.slice(0, 2);
-      }
-    });
-  }
-
-  checkAllPlayersSelected(players: any[], adminsPlayers: any[]): void {
+  checkAllPlayersSelected(players: Player[], adminsPlayers: Player[]): void {
     const allPlayersSelected = players.filter(player => player.gameMode === 'player').every(player => player.gameMode === 'player' && player.selectedCard);
     if(allPlayersSelected) {
       this.isSelectCards = true;
@@ -324,19 +263,42 @@ export class RoomGameComponent implements OnInit {
     }
   }
 
-  onPointCardClick(selectedPoint: any): void {
-    const selectedCard = this.scores.find(score => score.point === selectedPoint);
+  // onPointCardClick(selectedPoint: any): void {
+  //   const selectedCard = this.scores.find(score => score.point === selectedPoint);
+  //   if (this.isInvalidSelection(selectedCard, this.playerSession, selectedPoint)) {
+  //     this.clearSelections(selectedCard, this.playerSession);
+  //   } else if (this.canSelectCard(selectedCard, this.playerSession)) {
+  //     this.selectCard(selectedCard, this.playerSession, selectedPoint);
+  //     this.roomService.selectCard(this.playerSession);
+  //     this.roomService.onSelectedCard().pipe(takeUntil(this.unsuscriber$)).subscribe((game: Game) => {
+  //       this.players = game.players;
+  //       this.adminsPlayers = game.admins;
+  //       this.checkAllPlayersSelected(game.players, game.admins);
+  //     });
+  //   }
+  // }
 
+  onPointCardClick(selectedPoint: string | number): void {
+    const selectedCard = this.scores.find(score => score.point === selectedPoint);
+    if (!selectedCard) {
+      return;
+    }
     if (this.isInvalidSelection(selectedCard, this.playerSession, selectedPoint)) {
       this.clearSelections(selectedCard, this.playerSession);
-    } else if (this.canSelectCard(selectedCard, this.playerSession)) {
+      return;
+    }
+    if (this.canSelectCard(selectedCard, this.playerSession)) {
       this.selectCard(selectedCard, this.playerSession, selectedPoint);
       this.roomService.selectCard(this.playerSession);
-      this.roomService.onSelectedCard().pipe(takeUntil(this.unsuscriber$)).subscribe((game: any) => {
-        this.players = game.players;
-        this.adminsPlayers = game.admins;
-        this.checkAllPlayersSelected(game.players, game.admins);
-      })
+
+      this.roomService.onSelectedCard()
+        .pipe(takeUntil(this.unsuscriber$))
+        .subscribe(game => {
+          const { players, admins } = game;
+          this.players = players;
+          this.adminsPlayers = admins;
+          this.checkAllPlayersSelected(players, admins);
+        });
     }
   }
 
@@ -356,7 +318,6 @@ export class RoomGameComponent implements OnInit {
         score.selectedCard = false;
         score.hostSelectCard = false;
       });
-
     hostPlayer.selectedCard = false;
     hostPlayer.point = 0;
     this.isSelectCards = false;
@@ -390,22 +351,17 @@ export class RoomGameComponent implements OnInit {
   openModalInvitePlayer(): void {
     this.isOpenInviteModal = !this.isOpenInviteModal;
     this.url = `localhost:4200/room-game/${this.roomId}`;
-
   }
 
   private collectVotes(): void {
     const playerVotings = this.players.filter(player => player.gameMode === 'player');
     const votes: any[] = [];
-
     playerVotings.forEach(player => {
       votes.push(player.point);
     });
-
     votes.sort((a, b) => a - b);
-
     votes.forEach(vote => {
       const indexVote = this.selectedCards.findIndex(card => card.point === vote);
-
       if (indexVote !== -1) {
         this.selectedCards[indexVote].count += 1;
       } else {
@@ -419,14 +375,12 @@ export class RoomGameComponent implements OnInit {
   private calculateAverageScore(voteCards: any[]): void {
     let totalPoints: number = 0;
     let totalVotes: number = 0;
-
     voteCards.forEach(card => {
       if (!['?', '☕'].includes(card.point)) {
         totalPoints += card.point * card.count;
         totalVotes += card.count;
       }
     });
-
     this.average = totalVotes > 0 ? parseFloat((totalPoints / totalVotes).toFixed(2)) : 0;
     const cardVotes = {
       average: this.average,
@@ -440,7 +394,6 @@ export class RoomGameComponent implements OnInit {
       player.selectedCard = false;
       player.point = 0;
     });
-    console.log(this.players);
     this.scores.forEach(score => {
       score.selectedCard = false;
       score.hostSelectCard = false;
@@ -455,38 +408,29 @@ export class RoomGameComponent implements OnInit {
     this.roomService.resetGame(this.players, this.scores, this.selectedCards, this.average, this.isSelectCards, this.isRevealPoints, this.isCardsBlocked, this.isAverageSelected, this.isEndVotes);
   }
 
-  checkIsAdmin(): boolean {
-    const playerHost = this.players.find(player => player.isHost);
-    if(playerHost && this.adminsPlayers.includes(playerHost.id)) return true;
-    return false;
-  }
-
   private checkHostIsModePlayer(): boolean {
     const playerHost = this.players.find(player => player.isHost);
-    if(playerHost && playerHost.gameMode === 'player') {
-      return true;
-    }
-    return false;
+    return playerHost && playerHost.gameMode ? true : false;
   }
 
   watchPlayerSession(): void {
-    this.createPlayerService.playerSession$.pipe(takeUntil(this.unsuscriber$)).subscribe(data => {
+    this.createPlayerService.playerSession.pipe(takeUntil(this.unsuscriber$)).subscribe((data: Player) => {
       if(data) this.playerSession = data;
     });
   }
 
   watchPlayers(): void {
-    this.roomService.onNewPlayer().pipe(takeUntil(this.unsuscriber$)).subscribe(game => {
-      this.players = game.players;
-      this.roomGameName = game.name;
-      this.adminsPlayers = game.admins;
+    this.roomService.onNewPlayer().pipe(takeUntil(this.unsuscriber$)).subscribe(({ players, name, admins }: Game) => {
+      this.players = players;
+      this.roomGameName = name;
+      this.adminsPlayers = admins;
     });
     this.dividePlayersIntoSections();
   }
 
   closeUserModal(): void {
     this.isOpenModal = false;
-    this.createPlayerService.playerSession$.pipe(takeUntil(this.unsuscriber$)).subscribe(data => {
+    this.createPlayerService.playerSession.pipe(takeUntil(this.unsuscriber$)).subscribe((data: Player) => {
       if(data) this.playerSession = data;
     });
     this.roomService.onUpdateRoom().pipe(takeUntil(this.unsuscriber$)).subscribe((players: Player[]) => {
@@ -496,23 +440,20 @@ export class RoomGameComponent implements OnInit {
     this.roomService.onUpdatePlayer().pipe(takeUntil(this.unsuscriber$)).subscribe((player: Player) => {
       this.updatePlayerInSection(player);
       const indexPlayer = this.players.findIndex(p => p.id === player.id);
-      if(indexPlayer !== -1) {
-        this.players[indexPlayer] = player;
-      }
+      if(indexPlayer === -1) return;
+      this.players[indexPlayer] = player;
     });
   }
 
   isPlayerSession(): boolean {
-    if (this.playerSession.gameMode === 'player') return true
-    return false;
+    return this.playerSession.gameMode === 'player' ? true : false
   }
 
   private updatePlayerInSection(player: Player): void {
     for(const element of this.sections) {
       const index = element.findIndex(p => p.id === player.id);
-      if(index !== -1) {
-        element[index] = player;
-      }
+      if(index === -1) return;
+      element[index] = player;
     }
   }
 

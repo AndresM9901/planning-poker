@@ -111,23 +111,7 @@ describe('InputComponent', () => {
 
   // onInput
 
-  // it('onInput: should call onInput when input value changes', () => {
-  //   const mockEvent = { target: { value: 'Sprint 32' } };
-  //   const spy1 = jest.spyOn(component.valueChange, 'emit');
-  //   // const spy2 = jest.spyOn(component, 'registerOnChange');
-  //   // const spy3 = jest.spyOn(component, 'registerOnTouched').mockImplementation();
-  //   // const spy2 = jest.spyOn(component as any, 'onChange').mockImplementation();
-  //   component['onChange'] = undefined;
-  //   component['onTouched'] = undefined;
-
-  //   component.onInput(mockEvent as any);
-
-  //   expect(spy1).toHaveBeenCalledWith(mockEvent.target.value);
-  //   // expect(spy2).not.toHaveBeenCalled();
-  //   // expect(spy3).toHaveBeenCalled();
-  // });
-
-  it('onInput: should call onInput when input value changes', () => {
+  it('onInput: should call onInput when the input value changes and initializes "onChange" and "onTouched"', () => {
     const mockEvent = { target: { value: 'Sprint 32' } };
     const spy1 = jest.spyOn(component.valueChange, 'emit');
     component['onChange'] = (value: any) => {};
@@ -141,4 +125,21 @@ describe('InputComponent', () => {
     expect(spy2).toHaveBeenCalled();
     expect(spy3).toHaveBeenCalled();
   });
+
+  it('onInput: should call onInput when the input value changes and "onChange" and "onTouched" are not initialized.', () => {
+    const mockEvent = { target: { value: 'Sprint 32' } };
+    const spy1 = jest.spyOn(component.valueChange, 'emit');
+    // const spy2 = jest.spyOn(component, 'registerOnChange');
+    // const spy3 = jest.spyOn(component, 'registerOnTouched').mockImplementation();
+    // const spy2 = jest.spyOn(component as any, 'onChange').mockImplementation();
+    component['onChange'] = undefined;
+    component['onTouched'] = undefined;
+
+    component.onInput(mockEvent as any);
+
+    expect(spy1).toHaveBeenCalledWith(mockEvent.target.value);
+    // expect(spy2).not.toHaveBeenCalled();
+    // expect(spy3).toHaveBeenCalled();
+  });
+
 });

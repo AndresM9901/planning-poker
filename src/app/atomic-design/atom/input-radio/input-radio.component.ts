@@ -1,5 +1,5 @@
 import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'atom-input-radio',
@@ -13,7 +13,8 @@ import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
     }
   ],
 })
-export class InputRadioComponent {
+export class InputRadioComponent implements ControlValueAccessor {
+  @Input() id: string = '';
   @Input() name: string = '';
   @Input() value: string = '';
   @Input() placeholder: string = '';
@@ -25,8 +26,7 @@ export class InputRadioComponent {
   private onChange?: (value: any) => void;
   private onTouched?: () => void;
 
-  constructor() {
-  }
+  constructor() {}
 
   writeValue(value: any): void {
     if (this.formControl.value !== value) {
